@@ -3,8 +3,8 @@ from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database import Base
 
-from typing import Optional
-from datetime import datetime, timedelta, date
+
+from datetime import datetime, timedelta
 
 
 
@@ -14,7 +14,6 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     email = Column(String, nullable=False) 
     hashed_password = Column(String, nullable=False)
-    ref_code = Column(String, unique=True, nullable=True)
     referral_codes = relationship('ReferralCode', back_populates='user')
 
 
@@ -28,6 +27,9 @@ class ReferralCode(Base):
 
 
 
+# select users.id, email, code from users
+# LEFT JOIN referral_codes
+# ON users.id = referral_codes.user_id;
 
 
 
@@ -36,26 +38,3 @@ class ReferralCode(Base):
 
 
 
-# class SReferralCode(BaseModel):
-#     id: int
-#     code: str
-#     expiration_date: date
-#     user_id: int
-
-
-
-
-# class SUserAuth(BaseModel):
-#     email: EmailStr
-#     password: str
-
-#     model_config = {
-#         "json_schema_extra": {
-#             "examples": [
-#                 {
-#                     "email": "test@gmail.com",
-#                     "password": "Stro0ng!",
-#                 }
-#             ]
-#         }
-#     }

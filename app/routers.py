@@ -1,8 +1,9 @@
-from fastapi import Response, APIRouter, HTTPException, status
+from fastapi import  Response, APIRouter, HTTPException, Depends, status
 from app.schemas import SUserRegister, SUserLogin
 from app.dao import UsersDAO
 from app.auth import get_password_hash, verify_password, create_access_token
-
+from app.models import User
+from app.dependences import get_current_user
 
 user_router = APIRouter(
     prefix="/auth",
@@ -16,7 +17,7 @@ async def register_user(user_data: SUserRegister):
     if existing_user:
         raise HTTPException(status_code=500, detail="User is already existing")
     hashed_password = get_password_hash(user_data.password)
-    await UsersDAO.add(email=user_data.email, hashed_password=hashed_password, ref_code=user_data.ref_code)
+    await UsersDAO.add(email=user_data.email, hashed_password=hashed_password)
     return {"message": "Register has been successful!"}
 
 
@@ -28,7 +29,7 @@ async def register_user(response: Response, user_data: SUserLogin):
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User is not register or wrong password! ")
     access_token = create_access_token(
-        {"sub": int(user.id)})  # {sub: , expire: ""}
+        {"sub": str(user.id)})  # {sub: , expire: ""}
     response.set_cookie("ref_access_token", access_token)
     return {"message": "Login has been successful!"}
 
@@ -37,3 +38,22 @@ async def register_user(response: Response, user_data: SUserLogin):
 async def login_user(response: Response) -> dict:
     response.delete_cookie("events_access_token")
     return {"message": "Logout has been successful!"}
+
+
+# Получение информации о пользователе
+@user_router.get("/get")
+async def get_user(user: User = Depends(get_current_user)):
+    return user
+
+
+
+
+
+
+
+
+
+
+
+
+# referral_codes.code

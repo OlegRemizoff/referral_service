@@ -1,11 +1,12 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 
 
 class SUserRegister(BaseModel):
     email: EmailStr
     password: str
-    ref_code: Optional[str] = None
+    # referral_codes: Optional[List[str]] = None
+    # ref_code: Optional[str] = None
 
 
 class SUserLogin(BaseModel):

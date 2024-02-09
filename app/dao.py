@@ -47,3 +47,6 @@ class BaseDAO:
 
 class UsersDAO(BaseDAO):
     model = User
+
+
+    
