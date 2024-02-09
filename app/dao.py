@@ -26,11 +26,10 @@ class BaseDAO:
             query = select(cls.model).filter_by(**filter_by)
             result = await session.execute(query)
             return result.scalars().all()
-    
 
     @classmethod
     async def delete_by_id(cls, model_id: int):
-        async with async_session_maker() as session:          
+        async with async_session_maker() as session:
             obj = await session.get(cls.model, model_id)
             if obj:
                 await session.delete(obj)
@@ -44,7 +43,7 @@ class BaseDAO:
             query = insert(cls.model).values(**data)
             await session.execute(query)
             await session.commit()
-            
+
 
 class UsersDAO(BaseDAO):
-    model = User    
+    model = User
