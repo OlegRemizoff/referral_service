@@ -43,7 +43,8 @@ async def login_user(response: Response) -> dict:
 # Получение информации о пользователе
 @user_router.get("/get")
 async def get_user(user: User = Depends(get_current_user)):
-    return user
+    res = await UsersDAO.get_user_and_codes(id=user.id)
+    return res
 
 
 

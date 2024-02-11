@@ -1,7 +1,7 @@
 from app.database import async_session_maker
 from app.models import User
 from sqlalchemy import select, insert
-
+from sqlalchemy.orm import selectinload, load_only
 
 class BaseDAO:
     model = None
@@ -49,4 +49,26 @@ class UsersDAO(BaseDAO):
     model = User
 
 
-    
+    @classmethod
+    async def get_user_and_codes(cls, **filter_by):
+        async with async_session_maker() as session:
+
+            query = (
+                select(cls.model)
+                .filter_by(**filter_by)
+                .options(selectinload(cls.model.referral_codes), load_only(cls.model.id, cls.model.email))
+                )
+            result = await session.execute(query)
+            return result.scalar_one_or_none()
+
+
+
+
+
+
+            # query = (                   
+            #     select(WorkersOrm)
+            #     .options(selectinload(WorkersOrm.resumes)) 
+            # )
+            # res = session.execute(query)
+            # result = res.scalars().all() 
