@@ -13,7 +13,6 @@ def get_token(request: Request):
     token = request.cookies.get('ref_access_token')
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User does not found")
-    print(token)
     return token
 
 

@@ -1,7 +1,9 @@
 from app.database import async_session_maker
-from app.models import User
+from app.models import User, ReferralCode
 from sqlalchemy import select, insert
 from sqlalchemy.orm import selectinload, load_only
+from app.schemas import SReferralCode
+from datetime import date
 
 class BaseDAO:
     model = None
@@ -62,13 +64,21 @@ class UsersDAO(BaseDAO):
             return result.scalar_one_or_none()
 
 
+    @classmethod
+    async def add_code(cls, data: SReferralCode):
+    # id: Optional[int]
+    # code: str = Field(..., min_length=1)
+    # expiration_date: date
+    # user_id: int
+        
+        new_code = insert(ReferralCode).values(
 
+            code=data.code,
+            expiration_date=data.expiration_date,
+            user_id=data.user_id
+        )
 
-
-
-            # query = (                   
-            #     select(WorkersOrm)
-            #     .options(selectinload(WorkersOrm.resumes)) 
-            # )
-            # res = session.execute(query)
-            # result = res.scalars().all() 
+        async with async_session_maker() as session:
+            await session.execute(new_code)
+            await session.commit()
+            return {"message": "Object has been successefuly created"}

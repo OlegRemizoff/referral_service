@@ -1,17 +1,17 @@
 from fastapi import  Response, APIRouter, HTTPException, Depends, status
-from app.schemas import SUserRegister, SUserLogin
+from app.schemas import SUserRegister, SUserLogin, SReferralCode
 from app.dao import UsersDAO
 from app.auth import get_password_hash, verify_password, create_access_token
 from app.models import User
 from app.dependences import get_current_user
 
-user_router = APIRouter(
+router = APIRouter(
     prefix="/auth",
     tags=["Auth & Users"],
 )
 
 
-@user_router.post("/register")
+@router.post("/register")
 async def register_user(user_data: SUserRegister):
     existing_user = await UsersDAO.find_one_or_none(email=user_data.email)
     if existing_user:
@@ -21,8 +21,8 @@ async def register_user(user_data: SUserRegister):
     return {"message": "Register has been successful!"}
 
 
-@user_router.post("/login")
-async def register_user(response: Response, user_data: SUserLogin):
+@router.post("/login")
+async def login_user(response: Response, user_data: SUserLogin):
     user = await UsersDAO.find_one_or_none(email=user_data.email)
     if not user and not verify_password(user_data.password, user.password):
         return HTTPException(
@@ -34,27 +34,16 @@ async def register_user(response: Response, user_data: SUserLogin):
     return {"message": "Login has been successful!"}
 
 
-@user_router.post("/logout")
-async def login_user(response: Response) -> dict:
+@router.post("/logout")
+async def logout_user(response: Response) -> dict:
     response.delete_cookie("events_access_token")
     return {"message": "Logout has been successful!"}
 
 
 # Получение информации о пользователе
-@user_router.get("/get")
+@router.get("/get")
 async def get_user(user: User = Depends(get_current_user)):
     res = await UsersDAO.get_user_and_codes(id=user.id)
     return res
 
 
-
-
-
-
-
-
-
-
-
-
-# referral_codes.code
