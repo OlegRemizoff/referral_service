@@ -41,7 +41,7 @@ async def logout_user(response: Response) -> dict:
 
 
 # Получение информации о пользователе
-@router.get("/get")
+@router.get("/me")
 async def get_user(user: User = Depends(get_current_user)):
     res = await UsersDAO.get_user_and_codes(id=user.id)
     return res

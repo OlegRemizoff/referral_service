@@ -1,6 +1,6 @@
 from app.database import async_session_maker
 from app.models import User, ReferralCode
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete
 from sqlalchemy.orm import selectinload, load_only
 from app.schemas import SReferralCode
 from datetime import date
@@ -82,3 +82,13 @@ class UsersDAO(BaseDAO):
             await session.execute(new_code)
             await session.commit()
             return {"message": "Object has been successefuly created"}
+
+    @classmethod
+    async def delete_by_id(cls, id: int):
+        async with async_session_maker() as session:
+            obj = await session.get(ReferralCode, id)
+            if obj:
+                await session.delete(obj)
+                await session.commit()
+                return {"message": "Object has been successefuly deleted"}
+            return {"message": "Object not found"}

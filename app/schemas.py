@@ -18,31 +18,20 @@ class SUserLogin(BaseModel):
 
 
 class SReferralCode(BaseModel):
-    id: Optional[int]
+    id: Optional[int] 
     code: str = Field(..., min_length=1)
     expiration_date: Optional[date]
     user_id: int
    
 
-
-
-
-    # model_config = {
-    #     "json_schema_extra": {
-    #         "examples": [
-    #             {   
-    #                 "code": "",
-    #                 "expiration_date": "date-time",
-    #                 # "date_to": date.today().isoformat()
-    #             }
-    #         ],
-    #     }
-    # }
-
-
-
-    # id = Column(Integer, primary_key=True)
-    # code = Column(String, nullable=False)
-    # expiration_date = datetime.utcnow() + timedelta(days=180)
-    # user_id = Column(ForeignKey("users.id")) 
-    # user = relationship("User", back_populates="referral_codes")
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {   "id": 0,
+                    "code": "write something",
+                    "user_id": 0,
+                    "expiration_date": "2024-02-13"
+                }
+            ],
+        }
+    }

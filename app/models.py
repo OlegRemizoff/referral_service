@@ -1,5 +1,5 @@
-from pydantic import BaseModel, EmailStr
-from sqlalchemy import Column, Integer, String, Boolean,ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Boolean,ForeignKey, Date
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -21,16 +21,13 @@ class ReferralCode(Base):
     __tablename__ = 'referral_codes'
     id = Column(Integer, primary_key=True)
     code = Column(String, nullable=False)
-    expiration_date = Column(DateTime, default=datetime.utcnow() + timedelta(days=30))
+    expiration_date = Column(Date, nullable=False)
     user_id = Column(ForeignKey("users.id")) 
     user = relationship("User", back_populates="referral_codes")
     is_active = Column(Boolean, default=False)
 
 
 
-# select users.id, email, code from users
-# LEFT JOIN referral_codes
-# ON users.id = referral_codes.user_id;
 
 
 
