@@ -50,4 +50,6 @@ async def activate_code(desired_code: str, user: User = Depends(get_current_user
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User is unauthorized")
     await ReferralCodesDao.change_code(user_id=user.id, desired_code=desired_code)
-    return {"Current acite code": res}
+    current_code = await ReferralCodesDao.get_current_code(user.id)
+    
+    return {"Current active code": current_code}

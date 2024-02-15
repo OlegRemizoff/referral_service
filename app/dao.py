@@ -109,7 +109,7 @@ class ReferralCodesDao(BaseDAO):
             )
             on_desired_code = (
                 update(cls.model)
-                .where((cls.model.user_id == user_id) & (ReferralCode.code == desired_code))
+                .where((cls.model.user_id == user_id) & (cls.model.code == desired_code))
                 .values(is_active=True)
             )
             # await session.execute(text(stmt))
@@ -117,18 +117,21 @@ class ReferralCodesDao(BaseDAO):
             await session.execute(on_desired_code)
             await session.commit()
 
+    @classmethod
+    async def get_current_code(cls, user_id):
+        async with async_session_maker() as session:
+            stmt = (
+                """
+                SELECT referral_codes.code
+                FROM users
+                LEFT JOIN referral_codes ON users.id = referral_codes.user_id
+                WHERE users.id = :user_id AND referral_codes.is_active = True
 
-            # активный код
-            # stmt = (
-            #     """SELECT users.id, email, referral_codes.code, referral_codes.is_active
-            #        FROM users
-            #        LEFT JOIN referral_codes
-            #        ON users.id = referral_codes.user_id
-            #        WHERE referral_codes.is_active = 'True'
-            #     """
-            #     )
+                """
+            )
 
-            # UPDATE referral_codes
-            # SET is_active = 'True'
-            # WHERE id = '4';
+            stmt_with_user_id = stmt.replace(':user_id', str(user_id))
+            res = await session.execute(text(stmt_with_user_id))
 
+            current_code = res.scalar()  # fetchone()
+            return current_code
