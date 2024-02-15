@@ -36,7 +36,7 @@ async def login_user(response: Response, user_data: SUserLogin):
 
 @router.post("/logout")
 async def logout_user(response: Response) -> dict:
-    response.delete_cookie("events_access_token")
+    response.delete_cookie("ref_access_token")
     return {"message": "Logout has been successful!"}
 
 
