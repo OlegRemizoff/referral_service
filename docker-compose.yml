@@ -1,0 +1,49 @@
+version: '3.9'
+
+# docker-compose exec app alembic revision --autogenerate -m "init"
+
+# docker compose down && docker rmi referral_image:latest && docker compose up --build
+# command: bash -c "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+# sudo service postgresql restart
+
+services:
+  web:
+    image: referral_image 
+    build: 
+      context: .
+    container_name: referral_app
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    command: ["docker/app.sh"]
+    # command: bash -c "
+    #   uvicorn app.main:app
+    #   --host 0.0.0.0 --port 8000
+    #   --reload --log-level debug"
+      
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    container_name: pgdb
+    volumes:
+      - fastapi_postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test:
+        [
+            "CMD-SHELL", "pg_isready -d postgres -U postgres"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  fastapi_postgres_data: {}
+
+
+  
