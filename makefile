@@ -11,7 +11,7 @@ migrate:
 	alembic upgrade head
 
 down:
-	alembic downgrade -1
+	alembic downgrade base
 
 
 celery:
