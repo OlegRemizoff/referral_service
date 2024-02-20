@@ -76,10 +76,18 @@ class ReferralCodesDao(BaseDAO):
             user_id=data.user_id
         )
 
+        query = select(cls.model.code)
+
         async with async_session_maker() as session:
-            await session.execute(new_code)
-            await session.commit()
-            return {"message": "Object has been successefuly created"}
+            res = await session.execute(query)
+            existing_codes = res.scalars().all() # Получаем список всех кодов
+            if data.code in existing_codes:
+                return {"message": "Code already exists"}
+            else:
+                await session.execute(new_code)
+                await session.commit()
+                return {"message": "Code has been successfully created"}
+
 
     @classmethod
     async def delete_by_id(cls, id: int):
