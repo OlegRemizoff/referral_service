@@ -1,4 +1,4 @@
-# :bookmark_tabs: Digital Resume-Blog
+# :bookmark_tabs: Referral Service
 
 <p align="center">
 <img src="logo.png">
@@ -39,7 +39,9 @@ UI документация (Swagger/ReDoc)
 
 ## Установка
 
-
+### 0) Установить константы в .env-non-dev (для работы email) 
+    EMAIL_SENDER - адрес электронной почты с которого будет отправляться сообщение
+    EMAIL_PASSWORD - пароль (в двухэтапной аутентификации аккаунта, создать пароли приложений) 
 ### 1) Из директории (referral_service_main), где расположен файл Dockerfile, выполните команду 
     docker-compose up --build
 
