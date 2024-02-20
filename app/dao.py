@@ -110,20 +110,27 @@ class ReferralCodesDao(BaseDAO):
             #        AND referral_codes.is_active = True;
             #     """
             # )
-            off_all_code = (
-                update(cls.model)
-                .where(cls.model.user_id == user_id)
-                .values(is_active=False)
-            )
-            on_desired_code = (
-                update(cls.model)
-                .where((cls.model.user_id == user_id) & (cls.model.code == desired_code))
-                .values(is_active=True)
-            )
-            # await session.execute(text(stmt))
-            await session.execute(off_all_code)
-            await session.execute(on_desired_code)
-            await session.commit()
+            query = select(cls.model.code)
+            get_all_codes  = await session.execute(query)
+            all_codes = get_all_codes.scalars().all()
+
+            if desired_code  in all_codes:
+                off_all_code = (
+                    update(cls.model)
+                    .where(cls.model.user_id == user_id)
+                    .values(is_active=False)
+                )
+                on_desired_code = (
+                    update(cls.model)
+                    .where((cls.model.user_id == user_id) & (cls.model.code == desired_code))
+                    .values(is_active=True)
+                )
+                # await session.execute(text(stmt))
+                await session.execute(off_all_code)
+                await session.execute(on_desired_code)
+                await session.commit()
+
+
 
     @classmethod
     async def get_current_code(cls, user_id):
