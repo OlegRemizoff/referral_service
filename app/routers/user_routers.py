@@ -1,7 +1,8 @@
 from fastapi import  Response, APIRouter, HTTPException, Depends, status
-from app.schemas import SUserRegister, SUserLogin, SReferralCode
+from app.schemas import SUserRegister, SUserLogin
 from app.dao import UsersDAO
 from app.auth import get_password_hash, verify_password, create_access_token
+from app.utils import send_email
 from app.models import User
 from app.dependences import get_current_user
 
@@ -47,3 +48,15 @@ async def get_user(user: User = Depends(get_current_user)):
     return res
 
 
+# Получение всех реферальных кодов
+@router.get("/email")
+async def get_email(user: User = Depends(get_current_user)):
+    l = []
+    raw_data = await UsersDAO.get_user_and_codes(id=user.id)
+    for i in raw_data.referral_codes:
+        l.append(i.code)
+
+    message = ', '.join(l)
+
+    result = await send_email(user.email, message)
+    return result
